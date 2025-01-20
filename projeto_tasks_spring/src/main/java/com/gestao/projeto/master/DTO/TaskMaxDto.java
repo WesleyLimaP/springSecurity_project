@@ -1,28 +1,28 @@
 package com.gestao.projeto.master.DTO;
 
 import com.gestao.projeto.master.entity.Task;
-import com.gestao.projeto.master.entity.User;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public class TaskDto {
+public class TaskMaxDto {
     private Long id;
     @NotBlank(message = "titulo requerido")
     private String title;
-   @NotNull(message = "descrição requerida")
+    @NotBlank(message = "descrição requerida")
     private String description;
     @NotBlank(message = "status requerido")
     private String status;
+    @NotNull(message = "user requerido")
+    private Long UserDtoId;
 
-    public TaskDto(Long id, String title, String description, String status) {
-        this.id = id;
+    public TaskMaxDto( String title, String description, String status, Long userdtoId) {
         this.title = title;
         this.description = description;
         this.status = status;
+        this.UserDtoId = userdtoId;
     }
 
-    public TaskDto(Task task) {
+    public TaskMaxDto(Task task) {
         this.id = task.getId();
         this.title = task.getTitle();
         this.description = task.getDescription();
@@ -35,7 +35,7 @@ public class TaskDto {
         return id;
     }
 
-    public TaskDto() {
+    public TaskMaxDto() {
     }
 
     public void setId(Long id) {
@@ -66,4 +66,11 @@ public class TaskDto {
         this.status = status;
     }
 
+    public Long getUserDtoId() {
+        return UserDtoId;
+    }
+
+    public void setUserDtoId(Long userdtoId) {
+        UserDtoId = userdtoId;
+    }
 }
