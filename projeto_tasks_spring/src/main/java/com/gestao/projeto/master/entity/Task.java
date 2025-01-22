@@ -17,8 +17,7 @@ public class Task {
     @JoinColumn(name = "User_id")
     private User user;
 
-    public Task(Long id, String title, String description, Status status, User user_id) {
-        this.id = id;
+    public Task( String title, String description, Status status, User user_id) {
         this.title = title;
         this.description = description;
         this.status = status;

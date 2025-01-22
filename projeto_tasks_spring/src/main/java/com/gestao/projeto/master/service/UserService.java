@@ -1,9 +1,11 @@
 package com.gestao.projeto.master.service;
 import com.gestao.projeto.master.DTO.TaskDto;
 import com.gestao.projeto.master.DTO.UserDto;
+import com.gestao.projeto.master.entity.Role;
 import com.gestao.projeto.master.entity.Task;
 import com.gestao.projeto.master.entity.User;
 import com.gestao.projeto.master.enums.Status;
+import com.gestao.projeto.master.projection.UserProjection;
 import com.gestao.projeto.master.service.exceptions.RessoussesNotFoundException;
 import com.gestao.projeto.master.repository.UserRepository;
 import com.gestao.projeto.master.service.exceptions.dbExceptions.ViolationException;
@@ -12,15 +14,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private UserRepository repository;
@@ -34,7 +40,7 @@ public class UserService {
         user.setName(userDto.getName());
         user.setPassword(userDto.getPassword());
         for(TaskDto taskDto : userDto.getTasks()){
-            user.getTasks().add(new Task(taskDto.getId(), taskDto.getTitle(), taskDto.getDescription(), Status.valueOf(taskDto.getStatus()), user));
+            user.getTasks().add(new Task(taskDto.getTitle(), taskDto.getDescription(), Status.valueOf(taskDto.getStatus()), user));
         }
         repository.save(user);
         return new UserDto(user);
@@ -76,5 +82,20 @@ public class UserService {
     public UserDto getUser (long id) {
             User user = repository.findById(id).orElseThrow(() -> new RessoussesNotFoundException("id nao encontrado" ));
             return new UserDto(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        List<UserProjection> projection = repository.findByEmail(username);
+
+        if(projection.isEmpty()){
+            throw new UsernameNotFoundException("email nao encontrado");
+        }
+        User user = new User(projection.getFirst().getUserName(), projection.getFirst().getEmail(), projection.getFirst().getPassword() );
+        for (UserProjection projections : projection){
+            user.getRoles().add(new Role(projections.getRoleId(), projections.getAuthority()));
+
+        }
+        return user;
     }
 }

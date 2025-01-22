@@ -1,13 +1,14 @@
 package com.gestao.projeto.master.entity;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "tb_user")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,9 +20,16 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Task> tasks = new ArrayList<>();
 
-    public User(Long id, String name, String email, String password) {
+    @ManyToMany
+    @JoinTable (
+            name = "tb_user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
+    public User(String name, String email, String password) {
         this.password = password;
-        this.id = id;
         this.name = name;
         this.email = email;
     }
@@ -53,8 +61,22 @@ public class User {
         this.email = email;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return "";
     }
 
     public void setPassword(String password) {
