@@ -1,10 +1,10 @@
-package com.gestao.projeto.master.DTO;
+package com.gestao.projeto.master.DTO.erros;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ValidationError extends ErrorDto{
+public class ValidationError extends ErrorDto {
     private List<FildError> fildErrors = new ArrayList<>();
 
     public ValidationError() {

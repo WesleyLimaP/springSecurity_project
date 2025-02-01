@@ -1,4 +1,4 @@
-package com.gestao.projeto.master.DTO;
+package com.gestao.projeto.master.DTO.erros;
 
 import java.time.LocalDate;
 

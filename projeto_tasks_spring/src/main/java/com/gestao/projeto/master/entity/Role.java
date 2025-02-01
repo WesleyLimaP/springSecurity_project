@@ -1,5 +1,7 @@
 package com.gestao.projeto.master.entity;
 
+import com.gestao.projeto.master.enums.Authority;
+import com.gestao.projeto.master.service.exceptions.RessoussesNotFoundException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,7 +17,8 @@ public class Role implements GrantedAuthority {
     private Long id;
     @Column(unique = true)
     @NotNull
-    private String authority;
+    @Enumerated(EnumType.STRING)
+    private Authority authority;
 
     @ManyToMany(mappedBy = "roles")
     private List<User> users = new ArrayList<>();
@@ -25,16 +28,28 @@ public class Role implements GrantedAuthority {
 
     public Role(Long id, String authority) {
         this.id = id;
-        this.authority = authority;
+       setAuthority(authority);
+    }
+    public Role(Long id) {
+        this.id = id;
+    }
+
+    public Role(String authority) {
+        setAuthority(authority);
     }
 
     @Override
     public String getAuthority() {
-        return "";
+        return authority.name();
     }
 
     public void setAuthority(String authority) {
-        this.authority = authority;
+        try {
+            this.authority = Enum.valueOf(Authority.class, authority);
+        }catch (IllegalArgumentException e){
+            throw new RessoussesNotFoundException("role nao encontrado");
+        }
+
     }
 
     public Long getId() {
@@ -43,5 +58,9 @@ public class Role implements GrantedAuthority {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<User> getUsers() {
+        return users;
     }
 }

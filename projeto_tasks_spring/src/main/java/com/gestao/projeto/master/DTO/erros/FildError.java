@@ -1,6 +1,4 @@
-package com.gestao.projeto.master.DTO;
-
-import org.springframework.validation.FieldError;
+package com.gestao.projeto.master.DTO.erros;
 
 public class FildError {
     private String name;

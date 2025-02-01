@@ -1,8 +1,9 @@
 package com.gestao.projeto.master.controller.handler;
-import com.gestao.projeto.master.DTO.ErrorDto;
-import com.gestao.projeto.master.DTO.FildError;
-import com.gestao.projeto.master.DTO.ValidationError;
+import com.gestao.projeto.master.DTO.erros.ErrorDto;
+import com.gestao.projeto.master.DTO.erros.FildError;
+import com.gestao.projeto.master.DTO.erros.ValidationError;
 import com.gestao.projeto.master.service.exceptions.RessoussesNotFoundException;
+import com.gestao.projeto.master.service.exceptions.UnauthorizedException;
 import com.gestao.projeto.master.service.exceptions.dbExceptions.ViolationException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,12 @@ public class ControllerExceptionHandler {
         for(FieldError err : e.getFieldErrors()){
             errorDto.getFildErrors().add(new FildError(err.getField(), err.getDefaultMessage()));
         }
+        return ResponseEntity.status(status).body(errorDto);
+    }
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorDto> unauthorized(UnauthorizedException e, HttpServletRequest request){
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        ErrorDto errorDto = new ErrorDto(LocalDate.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(errorDto);
     }
 }

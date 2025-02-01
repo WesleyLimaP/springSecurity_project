@@ -1,5 +1,6 @@
 package com.gestao.projeto.master.entity;
 
+import com.gestao.projeto.master.enums.Authority;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,6 +35,13 @@ public class User implements UserDetails {
         this.email = email;
     }
 
+    public User(Long id, String email, String name, String password) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
     public User() {
     }
 
@@ -65,9 +73,20 @@ public class User implements UserDetails {
         return roles;
     }
 
+    public boolean hasRole(String role){
+      return this.roles.stream().anyMatch(r -> r.getAuthority().equals(role));
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
+    }
+
+    public boolean hasTask(Long taskId){
+        return getTasks().stream().anyMatch(t -> t.getId().equals(taskId));
+    }
+    public boolean isMe(Long id){
+        return this.id.equals(id);
     }
 
     public String getPassword() {

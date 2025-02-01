@@ -6,55 +6,36 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class UserDto {
-    private Long id;
+public class UpdateUserRequestDto {
     @NotBlank(message = "campo requerido")
     private String name;
-    @NotBlank(message = "campo requerido")
     @Email(message = "email invalido")
     private String email;
     @NotBlank
     @Size(min = 5, max = 16, message = "a senha deve ter entre 5 3 16 caracteres")
     private String password;
-    private Set<RoleDto> roles = new HashSet<>();
-    private List<TaskDto> tasks = new ArrayList<>();
 
-    public UserDto(String name, String email, String password) {
+    public UpdateUserRequestDto(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
     }
 
-    public UserDto(User user) {
-        id = user.getId();
+    public UpdateUserRequestDto(User user) {
         name = user.getName();
         email = user.getEmail();
         password = user.getPassword();
-        tasks = user.getTasks().stream().map(TaskDto::new).collect(Collectors.toList());
-        roles = user.getRoles().stream().map(RoleDto::new).collect(Collectors.toSet());
-    }
-    public UserDto(UserProjection user) {
-        id = user.getId();
-        name = user.getUserName();
-        email = user.getEmail();
-        password = user.getPassword();
-
-        getRoles().add(new RoleDto(user.getId(), user.getAuthority()));
     }
 
-    public UserDto() {
+    public UpdateUserRequestDto() {
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -80,11 +61,4 @@ public class UserDto {
         this.password = password;
     }
 
-    public List<TaskDto> getTasks() {
-        return tasks;
-    }
-
-    public Set<RoleDto> getRoles() {
-        return roles;
-    }
 }
