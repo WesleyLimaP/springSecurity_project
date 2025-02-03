@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -38,6 +39,12 @@ public class UserController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<UserDto> UpdateUser(@PathVariable long id, @Valid @RequestBody UpdateUserRequestDto dto, JwtAuthenticationToken token){
        return ResponseEntity.ok(service.updateUser(id, dto, token));
+    }
+
+    @GetMapping()
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<List<UserDto>> getAllUser(){
+        return ResponseEntity.ok(service.findAllUsers());
     }
 
 }

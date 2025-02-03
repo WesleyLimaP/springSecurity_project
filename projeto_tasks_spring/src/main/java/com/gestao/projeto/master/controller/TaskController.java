@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/tasks")
@@ -36,5 +37,10 @@ public class TaskController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<TaskDto> getTask( @PathVariable Long id, @Valid @RequestBody TaskDto dto, JwtAuthenticationToken token){
         return ResponseEntity.ok(service.updateTask(id, dto, token));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TaskDto>> getAllTasks(JwtAuthenticationToken token){
+        return ResponseEntity.ok(service.findAllTasks(token));
     }
 }

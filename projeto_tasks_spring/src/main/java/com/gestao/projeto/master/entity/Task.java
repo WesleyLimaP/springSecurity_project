@@ -1,6 +1,7 @@
 package com.gestao.projeto.master.entity;
 
 import com.gestao.projeto.master.enums.Status;
+import com.gestao.projeto.master.projection.TaskProjection;
 import jakarta.persistence.*;
 
 @Entity
@@ -23,6 +24,7 @@ public class Task {
         this.status = status;
         this.user = user_id;
     }
+
 
     public Task() {
     }

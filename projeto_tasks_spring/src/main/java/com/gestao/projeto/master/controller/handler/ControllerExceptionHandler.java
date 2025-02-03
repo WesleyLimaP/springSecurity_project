@@ -6,6 +6,7 @@ import com.gestao.projeto.master.service.exceptions.RessoussesNotFoundException;
 import com.gestao.projeto.master.service.exceptions.UnauthorizedException;
 import com.gestao.projeto.master.service.exceptions.dbExceptions.ViolationException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -42,6 +43,12 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorDto> unauthorized(UnauthorizedException e, HttpServletRequest request){
         HttpStatus status = HttpStatus.FORBIDDEN;
+        ErrorDto errorDto = new ErrorDto(LocalDate.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(errorDto);
+    }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorDto> illegalArgument(IllegalIdentifierException e, HttpServletRequest request){
+        HttpStatus status = HttpStatus.BAD_REQUEST;
         ErrorDto errorDto = new ErrorDto(LocalDate.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(errorDto);
     }

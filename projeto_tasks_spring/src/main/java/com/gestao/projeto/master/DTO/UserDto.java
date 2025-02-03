@@ -37,12 +37,12 @@ public class UserDto {
         roles = user.getRoles().stream().map(RoleDto::new).collect(Collectors.toSet());
     }
     public UserDto(UserProjection user) {
-        id = user.getId();
-        name = user.getUserName();
+        id = user.getUserId();
+        name = user.getName();
         email = user.getEmail();
         password = user.getPassword();
 
-        getRoles().add(new RoleDto(user.getId(), user.getAuthority()));
+        getRoles().add(new RoleDto(user.getRoleId(), user.getAuthority()));
     }
 
     public UserDto() {

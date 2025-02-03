@@ -18,7 +18,7 @@ public class User implements UserDetails {
     private String email;
     @Column(unique = true)
     private String password;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Task> tasks = new ArrayList<>();
 
     @ManyToMany

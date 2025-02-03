@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 
 @Service
@@ -72,9 +73,6 @@ public class UserService implements UserDetailsService {
             var dto = repository.findUserByIdRolesEager(id).orElseThrow(()-> new RessoussesNotFoundException("user nao encontrado"));
             var userLogado = repository.findUserByIdRolesEager(Long.valueOf(token.getName())).orElseThrow(() -> new RessoussesNotFoundException("user nao encontrado"));
             if(!dto.isMe(Long.valueOf(token.getName())) && !userLogado.hasRole("ROLE_ADMIN")){
-                for(Role role: dto.getRoles()){
-                    System.out.println(role.getAuthority());
-                }
                throw new UnauthorizedException("permissão negada");
             }
             repository.delete(dto);
@@ -121,16 +119,12 @@ public class UserService implements UserDetailsService {
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        List<UserProjection> projection = repository.findByEmail(username);
+        Optional<UserProjection> projection = repository.findByEmail(username);
 
-        if (projection.isEmpty()) {
-            throw new UsernameNotFoundException("email nao encontrado");
-        }
-        User user = new User(projection.getFirst().getId(), projection.getFirst().getUserName(), projection.getFirst().getEmail(), projection.getFirst().getPassword());
-        for (UserProjection projections : projection) {
-            user.getRoles().add(new Role(projections.getRoleId(), projections.getAuthority()));
+        User user = new User(projection.get().getUserId(), projection.get().getName(), projection.get().getEmail(), projection.get().getPassword());
 
-        }
+            user.getRoles().add(new Role(projection.get().getRoleId(), projection.get().getAuthority()));
+
         return user;
     }
 
@@ -147,6 +141,11 @@ public class UserService implements UserDetailsService {
 
         }
 
+    }
+
+    @Transactional
+    public List<UserDto> findAllUsers(){
+       return repository.findAllUsers();
     }
 
     

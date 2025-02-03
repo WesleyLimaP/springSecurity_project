@@ -2,6 +2,7 @@ package com.gestao.projeto.master.DTO;
 
 import com.gestao.projeto.master.entity.Task;
 import com.gestao.projeto.master.entity.User;
+import com.gestao.projeto.master.projection.TaskProjection;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +20,12 @@ public class TaskDto {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.status = status;
+        try {
+            this.status = status;
+        }catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("sintaxe de status invalida");
+        }
+
     }
 
     public TaskDto(Task task) {
@@ -28,6 +34,12 @@ public class TaskDto {
         this.description = task.getDescription();
         this.status = task.getStatus().name();
 
+    }
+    public TaskDto (TaskProjection taskProjection){
+        this.id = taskProjection.getId();
+        this.title = taskProjection.getTitle();
+        this.description = taskProjection.getDescription();
+        this.status = taskProjection.getStatus();
     }
 
 
